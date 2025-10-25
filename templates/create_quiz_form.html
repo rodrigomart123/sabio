@@ -1,0 +1,21 @@
+{% extends "dashboard.html" %}
+{% block content %}
+<div class="card quiz-card">
+  <h2>Criar Novo Quiz</h2>
+  <form method="POST" enctype="multipart/form-data">
+    <label>Título:</label>
+    <input type="text" name="title" required>
+
+    <label>Descrição:</label>
+    <input type="text" name="description">
+
+    <label>Imagem de capa (upload opcional):</label>
+    <input type="file" name="cover_image" accept="image/*">
+
+    <label>Tornar público?</label>
+    <input type="checkbox" name="is_public" value="1">
+
+    <button type="submit" class="btn">Criar Quiz</button>
+  </form>
+</div>
+{% endblock %}

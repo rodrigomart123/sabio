@@ -1,0 +1,193 @@
+{% extends "dashboard.html" %}
+{% block content %}
+<div class="quiz-detail-container">
+  <div class="quiz-header">
+    <img 
+      src="{{ quiz.cover_image_url if quiz.cover_image_url else url_for('static', filename='img/placeholder.png') }}" 
+      alt="Capa do quiz"
+      class="quiz-detail-cover">
+    
+    <div class="quiz-header-text">
+      <h1>{{ quiz.title }}</h1>
+      <p>{{ quiz.description or 'Sem descrição.' }}</p>
+      <p class="quiz-meta">
+        Criado por <strong>{{ creator.username }}</strong> · {{ quiz.questions|length }} perguntas
+      </p>
+
+      <div class="quiz-buttons">
+        <form id="favorite-form" method="post" action="{{ url_for('toggle_favorite', quiz_id=quiz.id) }}">
+            <button type="button" id="favorite-btn" class="quiz-button favorite-btn">
+            {% if is_favorited %}
+            <i class="fa-solid fa-star"></i>
+            {% else %}
+            <i class="fa-regular fa-star"></i>
+            {% endif %}
+            </button>
+        </form>
+
+        <a href="{{ url_for('play_quiz', quiz_id=quiz.id) }}" class="quiz-button brown">
+            <i class="fa-solid fa-play"></i> Jogar agora
+        </a>
+        </div>
+
+
+      
+
+      <script>
+        const favoriteBtn = document.getElementById('favorite-btn');
+        const icon = favoriteBtn.querySelector('i');
+
+        // ⚙️ Define estado inicial conforme backend
+
+        favoriteBtn.addEventListener('click', async function () {
+        const res = await fetch('{{ url_for("toggle_favorite", quiz_id=quiz.id) }}', { method: 'POST' });
+        const data = await res.json();
+
+        if (data.favorited) {
+            icon.classList.remove('fa-regular');
+            icon.classList.add('fa-solid');
+            favoriteBtn.classList.add('favorited');
+        } else {
+            icon.classList.remove('fa-solid');
+            icon.classList.add('fa-regular');
+            favoriteBtn.classList.remove('favorited');
+        }
+        });
+        </script>
+
+
+    </div>
+  </div>
+
+  <div class="quiz-questions-preview">
+    <h3>Perguntas:</h3>
+    <ul>
+      {% for q in quiz.questions %}
+      <li>{{ loop.index }}. {{ q.question_text }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<style>
+.quiz-detail-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+}
+
+/* Header */
+.quiz-header {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-bottom: 40px;
+}
+
+.quiz-detail-cover {
+  width: 250px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* Texto */
+.quiz-header-text h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #4B2E2B;
+}
+
+.quiz-header-text p {
+  color: #5b4b43;
+}
+
+.quiz-meta {
+  color: #8b7b70;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+/* Botões */
+.quiz-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #02B758;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.quiz-button:hover {
+  background: #02974a;
+  transform: scale(1.03);
+}
+
+.favorite-btn {
+  background: transparent;
+  color: #F6B908;
+  height: 45px;
+  font-size: large;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.favorite-btn:hover {
+    background: transparent;
+}
+
+/* Quando o utilizador passa o rato por cima (hover),
+   e o botão ainda não está favoritado */
+.favorite-btn:hover:not(.favorited) i {
+  color: #F6B908;
+}
+
+/* Faz com que o ícone mude visualmente para "cheio" no hover */
+.favorite-btn:hover:not(.favorited) i::before {
+  content: "\f005"; /* código unicode do ícone fa-solid fa-star */
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900; /* força o estilo "solid" */
+}
+
+
+.favorite-btn.favorited i {
+  color: #F6B908; /* cor da estrela cheia */
+}
+
+/* Lista de perguntas */
+.quiz-questions-preview ul {
+  list-style: none;
+  padding: 0;
+}
+
+.quiz-questions-preview li {
+  background: #ffffff;
+  margin-bottom: 8px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.quiz-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espaço entre os botões */
+  margin-top: 10px;
+}
+
+.quiz-buttons form {
+  margin: 0; /* remove espaçamento extra */
+}
+
+</style>
+{% endblock %}

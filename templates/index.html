@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sabio – Jogos educacionais</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" type="image/jpg" href="/static/img/logoapp.png">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<header>
+    
+  <div class="container">
+    <div class="logo">
+      <img src="/static/img/logotoppagetransparent.png" alt="Logo SABIO">  
+    </div>
+    <nav>
+        <a href="#">Entrar numa Sala</a>
+      
+        {% if username %}
+          <div class="dropdown">
+            <button class="dropbtn">Olá {{ username }}! <i class="fa-solid fa-angle-down"></i></button>
+            <div class="dropdown-content">
+              <a href="/dashboard/profile">Perfil</a>
+              <a href="/logout">Terminar Sessão</a>
+            </div>
+          </div>
+          <a class="btn" href="/dashboard">Dashboard</a>
+        {% else %}
+          <a href="/login">Login</a>
+          <a class="btn" href="/register">Criar Conta</a>
+        {% endif %}
+</header>
+<main>
+<section class="hero">
+  <div class="hero-text">
+    <h2>Jogos educacionais em tempo real!</h2>
+    <p>Joga, aprende e compete com outros no Sabio, o quiz multiplayer mais divertido e interativo.</p>
+    {% if username %}
+    <a class="btn" href="/dashboard">Começar Agora</a>
+{% else %}
+    <a class="btn" href="/login">Começar Agora</a>
+{% endif %} 
+  </div>
+  <div class="hero-img">
+    <img src="/static/img/figure.gif" alt="SABIO exemplo">
+  </div>
+</section>
+
+<section class="features">
+  <div class="feature">
+    <h3>Fácil de Usar</h3>
+    <p>Cria ou entra num quiz em segundos.</p>
+  </div>
+  <div class="feature">
+    <h3>Modos Diversos</h3>
+    <p>Clássico, cooperativo, sobrevivência e muito mais.</p>
+  </div>
+  <div class="feature">
+    <h3>Grátis e Divertido</h3>
+    <p>Para a escola, trabalho ou lazer.</p>
+  </div>
+</section>
+</main>
+<footer>
+  <div class="wave"></div>
+  <p>© 2025 SABIO. Todos os direitos reservados.</p>
+</footer>
+
+</body>
+</html>

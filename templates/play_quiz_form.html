@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ quiz.title }} – SABIO</title>
+  <link rel="icon" type="image/jpg" href="{{ url_for('static', filename='img/logoapp.jpg') }}">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: #f8f4ef;
+    background-image: url("/static/img/chess.png");
+    background-size: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .quiz-container {
+    width: 90%;
+    max-width: 900px;
+    text-align: center;
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  h1 {
+    color: #4b2e2b;
+    margin-bottom: 25px;
+  }
+
+  .question {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #4b2e2b;
+    margin-bottom: 40px;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .option {
+    padding: 35px;
+    border-radius: 14px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    color: white;
+    border: 4px solid transparent;
+  }
+
+  /* 🎨 Cores estilo Kahoot */
+  .option.red { background-color: #e74c3c; }     /* Vermelho */
+  .option.green { background-color: #27ae60; }   /* Verde */
+    .option.blue { background-color: #3498db; }    /* Azul */
+  .option.yellow { background-color: #f1c40f; color: #3c2a25; }  /* Amarelo */
+
+  .option:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+
+  .option.selected {
+    border-color: #4b2e2b;
+    transform: scale(1.05);
+  }
+
+  .next-btn {
+    margin-top: 40px;
+    padding: 14px 30px;
+    background: #4b2e2b;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .next-btn:hover {
+    background: #7c564e;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .result {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #4b2e2b;
+  }
+
+  .restart {
+    margin-top: 20px;
+    background: #b67f66;
+  }
+</style>
+
+</head>
+<body class="auth-page">
+
+  <div class="quiz-container">
+    <h1>{{ quiz.title }}</h1>
+    <div id="quiz-area">
+      <div class="question" id="question-text"></div>
+      <div class="options-grid" id="options-container"></div>
+      <button class="next-btn hidden" id="next-btn">Próxima</button>
+    </div>
+
+    <div id="result-area" class="hidden">
+      <p class="result" id="result-text"></p>
+      <button class="next-btn restart" onclick="window.location.reload()">Jogar de novo</button>
+      <a class="next-btn" href="{{ url_for('play_quiz_list') }}">Voltar</a>
+    </div>
+  </div>
+
+  <script>
+  const questions = JSON.parse(`{{ questions | tojson | safe }}`);
+  let currentIndex = 0;
+  let score = 0;
+  let selectedOption = null;
+
+  const questionEl = document.getElementById("question-text");
+  const optionsEl = document.getElementById("options-container");
+  const nextBtn = document.getElementById("next-btn");
+  const resultArea = document.getElementById("result-area");
+  const quizArea = document.getElementById("quiz-area");
+
+  function showQuestion() {
+    const q = questions[currentIndex];
+    questionEl.textContent = q.question_text;
+    selectedOption = null;
+
+    optionsEl.innerHTML = "";
+    const options = [
+      { key: "A", text: q.option_a },
+      { key: "B", text: q.option_b },
+      { key: "C", text: q.option_c },
+      { key: "D", text: q.option_d },
+    ];
+
+    const colors = ["red", "green", "blue", "yellow"]; // 🎨 Kahoot colors
+
+    options.forEach((opt, i) => {
+      const div = document.createElement("div");
+      div.classList.add("option", colors[i]);
+      div.textContent = opt.text;
+      div.dataset.value = opt.key;
+      div.addEventListener("click", selectOption);
+      optionsEl.appendChild(div);
+    });
+
+    nextBtn.classList.add("hidden");
+  }
+
+  function selectOption(e) {
+    document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
+    const selected = e.currentTarget;
+    selected.classList.add("selected");
+    selectedOption = selected.dataset.value;
+    nextBtn.classList.remove("hidden");
+  }
+
+  nextBtn.addEventListener("click", () => {
+    const q = questions[currentIndex];
+
+    // ✅ Só conta ponto ao clicar em "Próxima"
+    if (selectedOption === q.correct_option) {
+      score++;
+    }
+
+    currentIndex++;
+    if (currentIndex < questions.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  });
+
+  function showResult() {
+    quizArea.classList.add("hidden");
+    resultArea.classList.remove("hidden");
+    document.getElementById("result-text").textContent =
+      `Terminaste! Pontuação: ${score}/${questions.length}`;
+  }
+
+  showQuestion();
+</script>
+
+</body>
+</html>

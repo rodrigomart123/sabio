@@ -1,0 +1,267 @@
+{% extends "dashboard.html" %}
+{% block content %}
+<div class="container">
+  <div class="header-section">
+    <h1>Quizzes disponíveis</h1>
+    <p>Jogos públicos</p>
+  </div>
+
+  {% if quizzes %}
+  <div class="quiz-carousel-wrapper">
+    <button class="arrow left" id="arrowLeft">‹</button>
+
+    <div class="quiz-carousel" id="quizCarousel">
+      {% for quiz in quizzes %}
+      <a href="{{ url_for('quiz_detail', quiz_id=quiz.id) }}" class="quiz-card-link">
+        <div class="quiz-card">
+          <div class="quiz-image">
+            <img 
+              src="{{ quiz.cover_image_url if quiz.cover_image_url else url_for('static', filename='img/placeholder.png') }}" 
+              alt="Capa do quiz">
+            <div class="quiz-question-count">
+              {{ quiz.questions|length }} perguntas
+            </div>
+          </div>
+          <div class="quiz-info-bar">
+            <div class="quiz-text">
+              <p class="quiz-title" style="font-size: large;">{{ quiz.title }}</p>
+              <p class="quiz-description" style="font-size: small;">
+                {{ quiz.description[:30] ~ ('...' if quiz.description|length > 30 else '') or 'Sem descrição.' }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+
+    <button class="arrow right" id="arrowRight">›</button>
+  </div>
+  {% else %}
+    <p class="empty-message">Não há quizzes disponíveis neste momento.</p>
+  {% endif %}
+</div>
+
+<style>
+/* CONTAINER PRINCIPAL */
+.container {
+  max-width: 1400px;
+  margin-left: -80px;
+  margin-top: 30px;
+  padding-left: 40px;
+  padding-right: 40px;
+  box-sizing: border-box;
+}
+
+.header-section {
+  text-align: left;
+}
+
+.header-section h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.header-section p {
+  color: #666;
+  font-size: 1rem;
+}
+
+/* --- CARROSSEL --- */
+.quiz-carousel-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 1400px;
+}
+
+.quiz-carousel {
+  display: flex;
+  gap: 1px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  width: 100%;
+  padding: 10px 0;
+  scrollbar-width: none; /* Firefox */
+}
+
+.quiz-carousel::-webkit-scrollbar {
+  display: none; /* Chrome */
+}
+
+.quiz-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  width: 280px;
+  flex-shrink: 0; /* impede encolher */
+}
+
+
+.quiz-card-link:hover .quiz-card {
+  transform: translateY(-5px);
+}
+
+
+/* --- SETAS --- */
+.arrow {
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  width: 45px;
+  height: 60px;
+  border-radius: 8px;
+  transition: background 0.3s;
+  z-index: 10;
+}
+
+.arrow:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.arrow.left {
+  position: absolute;
+  left: -50px;
+}
+
+.arrow.right {
+  position: absolute;
+  right: -50px;
+}
+
+/* --- CARTÕES --- */
+.quiz-card {
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  width: 100%;
+  height: 100%;
+}
+
+.quiz-card:hover {
+  transform: translateY(-5px);
+}
+
+/* --- IMAGEM --- */
+.quiz-image {
+  position: relative;
+}
+
+.quiz-image img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+  border-radius: 10px; /* bordas suaves na imagem */
+}
+
+.quiz-question-count {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.65);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 5px;
+}
+
+/* --- INFO --- */
+.quiz-info-bar {
+  padding: 10px 5px;
+  background: transparent; /* sem fundo branco */
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.quiz-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 4px;
+}
+
+.quiz-description {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.3;
+}
+
+.quiz-button {
+  display: inline-block;
+  background: #5c4033;
+  color: #fff;
+  text-decoration: none;
+  padding: 7px 16px;
+  border-radius: 6px;
+  margin-top: 16px;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.quiz-button:hover {
+  background: #b67f66;
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 1200px) {
+  .container {
+    margin-left: 240px;
+    padding: 0 20px;
+  }
+  .quiz-card {
+    flex: 0 0 240px;
+  }
+}
+
+@media (max-width: 900px) {
+  .container {
+    margin-left: 200px;
+    padding: 0 15px;
+  }
+  .arrow.left { left: -30px; }
+  .arrow.right { right: -30px; }
+}
+
+@media (max-width: 700px) {
+  .container {
+    margin-left: 0;
+    padding: 0 10px;
+  }
+  .quiz-card {
+    flex: 0 0 80%;
+  }
+  .arrow {
+    display: none;
+  }
+}
+
+
+</style>
+
+<script>
+const carousel = document.getElementById('quizCarousel');
+const left = document.getElementById('arrowLeft');
+const right = document.getElementById('arrowRight');
+
+left.addEventListener('click', () => {
+  carousel.scrollBy({ left: -carousel.clientWidth / 1.1, behavior: 'smooth' });
+});
+
+right.addEventListener('click', () => {
+  carousel.scrollBy({ left: carousel.clientWidth / 1.1, behavior: 'smooth' });
+});
+</script>
+{% endblock %}

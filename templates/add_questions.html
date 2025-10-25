@@ -1,0 +1,46 @@
+{% extends "dashboard.html" %}
+{% block content %}
+<div class="card quiz-card">
+  <h3>Adicionar Pergunta ao Quiz: {{ quiz.title }}</h3>
+  <form action="/dashboard/add_questions/{{ quiz.id }}" method="POST">
+    <label>Pergunta:</label>
+    <input type="text" name="question_text" required>
+
+    <label>Opção A:</label>
+    <input type="text" name="option_a" required>
+
+    <label>Opção B:</label>
+    <input type="text" name="option_b" required>
+
+    <label>Opção C:</label>
+    <input type="text" name="option_c" required>
+
+    <label>Opção D:</label>
+    <input type="text" name="option_d" required>
+
+    <label>Resposta correta:</label>
+    <select name="correct_option" required>
+      <option value="A">A</option>
+      <option value="B">B</option>
+      <option value="C">C</option>
+      <option value="D">D</option>
+    </select>
+
+    <button type="submit" class="btn">Adicionar Pergunta</button>
+  </form>
+
+  {% if quiz.questions %}
+  <div class="question-list">
+    <h4>Perguntas já adicionadas:</h4>
+    <ul>
+      {% for q in quiz.questions %}
+        <li>{{ q.question_text }}</li>
+      {% endfor %}
+    </ul>
+    <form action="{{ url_for('finish_quiz', quiz_id=quiz.id) }}" method="POST">
+      <button type="submit" class="btn finish-btn">Concluir Quiz</button>
+    </form>
+  </div>
+{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SABIO</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/jpg" href="/static/img/logoapp.jpg">
+    <style>
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .password-wrapper input {
+            width: 100%;
+            padding-right: 40px;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 1px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+        .toggle-password img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <h2>Entrar</h2>
+        {% if message %}
+            <p style="color:red">{{ message }}</p>
+        {% endif %}
+        <form action="/login" method="post">
+            <input type="text" name="identifier" placeholder="Nome de utilizador ou e-mail" required>
+
+            <div class="password-wrapper">
+                <input type="password" name="password" id="login-password" placeholder="Palavra-passe" required>
+                <button type="button" class="toggle-password" onclick="togglePassword('login-password', this)">
+                    <img src="/static/img/cheeseinvis.png" alt="Mostrar senha">
+                </button>
+            </div>
+
+            <button class="btn" type="submit">Login</button>
+        </form>
+
+        <p><a href="/forgot">Esqueci-me da palavra-passe</a></p>
+        <p>Não tens conta? <a href="/register">Criar conta</a></p>
+    </div>
+
+    <script>
+        function togglePassword(id, btn) {
+            const input = document.getElementById(id);
+            const img = btn.querySelector("img");
+
+            if (input.type === "password") {
+                input.type = "text";
+                img.src = "/static/img/cheesevis.png"; // 👀 imagem para mostrar senha
+                img.alt = "Esconder senha";
+            } else {
+                input.type = "password";
+                img.src = "/static/img/cheeseinvis.png"; // ❌ imagem para esconder senha
+                img.alt = "Mostrar senha";
+            }
+        }
+    </script>
+</body>
+</html>

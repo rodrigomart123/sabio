@@ -1,0 +1,8 @@
+{% extends "dashboard.html" %}
+{% block content %}
+<div class="card quiz-card">
+  <h2>Resultado do Quiz: {{ quiz.title }}</h2>
+  <p>Acertaste {{ score }} de {{ total }} perguntas.</p>
+  <a href="{{ url_for('play_quiz_list') }}" class="btn">Voltar aos quizzes</a>
+</div>
+{% endblock %}

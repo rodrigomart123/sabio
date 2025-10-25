@@ -1,0 +1,343 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil - SABIO</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+
+
+
+        .profile-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 60px;
+            padding: 50px;
+        }
+
+        .avatar-section {
+            text-align: center;
+        }
+
+        .avatar-preview {
+            position: relative;
+            width: 180px;
+            height: 245px;
+            cursor: pointer;   /* mãozinha quando passa por cima */
+        }
+        .avatar-preview img {
+            position: absolute;
+            top: 0; left: 0;
+            width: 180px;
+            height: 265px;
+            pointer-events: none; /* evita bug de clicar só na imagem e não no div */
+        }
+
+
+        .stats-section {
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px 40px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: #f8f4f0;
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stat-card i {
+            font-size: 28px;
+            color: #5c4033;
+        }
+
+        .stat-card div {
+            text-align: left;
+        }
+
+        .stat-title {
+            font-weight: bold;
+            color: #5c4033;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            color: #2c2c2c;
+        }
+
+        .back-btn {
+            display: block;
+            margin: 40px auto 0;
+            background: #5c4033;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #3b2920;
+        }
+
+        /* Modal (popup) */
+        .modal {
+            display: none; /* escondido por padrão */
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            position: relative;
+            width: 300px;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px; right: 15px;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .avatar-edit-container {
+            position: relative;
+            width: 180px;
+            height: 265px;
+            margin: 20px auto;
+        }
+
+        .avatar-edit-container img {
+            position: absolute;
+            top: 0; left: 0;
+            width: 180px; height: 265px;
+        }
+
+        .arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(92, 64, 51, 0.8);
+            color: white;
+            border: none;
+            font-size: 20px;
+            padding: 5px 10px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .arrow.left { left: -40px; top: 85px;}
+        .arrow.right { right: -40px; top: 85px; }
+
+        .arrow.left2 { left: -40px; top: 160px;}
+        .arrow.right2 { right: -40px; top: 160px;}
+
+        .arrow:hover { background: #3b2920; }
+        .save-btn {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #5c4033;
+            color: white;   
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .save-btn:hover { background: #3b2920; }
+
+    </style>
+
+    <div class="profile-container">
+        <!-- Avatar -->
+        <div class="avatar-section">
+            <h2>{{ user.username }}</h2>
+            <p>Nível {{ user.level or 0 }}</p>
+            <div class="avatar-preview" id="avatarContainer">
+                <img src="/static/img/avatar.png"> <!-- corpo base -->
+                <img src="/static/img/avatareditor/accessories/{{ user.avatar.accessory or '001' }}.png" id="avatar-accessory">
+                <img src="/static/img/avatareditor/clothes/{{ user.avatar.outfit or '001' }}.png" id="avatar-outfit">
+
+            </div>
+            
+            
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-section">
+            <div class="stat-card">
+                <i class="fas fa-star"></i>
+                <div>
+                    <div class="stat-title">Dominado</div>
+                    <div class="stat-value">{{ user.mastered or 0 }}</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fa-solid fa-calendar-check"></i>
+                <div>
+                    <div class="stat-title">Dias Ativos</div>
+                    <div class="stat-value">{{ user.active_days or 0 }}</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-fire"></i>
+                <div>
+                    <div class="stat-title">Maior Streak</div>
+                    <div class="stat-value">{{ user.highest_streak or 0 }}</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-gamepad"></i>
+                <div>
+                    <div class="stat-title">Jogos Terminados</div>
+                    <div class="stat-value">{{ user.games_finished or 0 }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--<a href="/" class="back-btn">Voltar à Página Inicial</a>--> 
+
+        <!-- Popup Modal -->
+    <div id="avatarModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+
+            <h3>Editar avatar?</h3>
+            <div class="avatar-edit-container">
+                <img src="/static/img/avatar.png" id="modal-base">
+                <img draggable="false" src="/static/img/avatareditor/accessories/{{ user.avatar.accessory or '001' }}.png" id="modal-accessory">
+                <img draggable="false" src="/static/img/avatareditor/clothes/{{ user.avatar.outfit or '001' }}.png" id="modal-outfit">
+
+
+                <button class="arrow left" onclick="prevAccessory()"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="arrow right" onclick="nextAccessory()"><i class="fa-solid fa-chevron-right"></i></button>
+
+                <button class="arrow left2" onclick="prevOutfit()"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="arrow right2" onclick="nextOutfit()"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
+            <button class="save-btn" onclick="saveAvatar()">Guardar</button>
+        </div>
+    </div>
+
+    <script>
+    const modal = document.getElementById("avatarModal");
+
+    // Avatar no perfil (fora do modal)
+    const accessoryMain = document.getElementById("avatar-accessory");
+    const outfitMain = document.getElementById("avatar-outfit");
+
+    // Avatar dentro do modal
+    const accessoryModal = document.getElementById("modal-accessory");
+    const outfitModal = document.getElementById("modal-outfit");
+
+    const avatarContainer = document.getElementById("avatarContainer");
+
+    // Arrays de imagens
+    const accessories = [ "001", "002", "003", "004", "005", "006", "007", "008", "009" ];
+    const outfits = [ "001", "002", "003", "004", "005", "006", "007" ];
+
+
+    // Inicializar com os valores atuais do user
+    let accessoryFile = accessoryMain.src.split('/').pop().replace('.png', '');
+    let currentAccessory = accessories.indexOf(accessoryFile);
+    if (currentAccessory === -1) currentAccessory = 0;
+
+    let outfitFile = outfitMain.src.split('/').pop().replace('.png', '');
+    let currentOutfit = outfits.indexOf(outfitFile);
+    if (currentOutfit === -1) currentOutfit = 0;
+
+
+
+    // Abrir modal
+    avatarContainer.addEventListener("click", function () {
+        modal.style.display = "flex";
+        // Sincroniza modal com valores atuais do perfil
+        updateAccessory();
+        updateOutfit();
+    });
+
+    function closeModal() {
+        modal.style.display = "none";
+    }
+
+    // Atualizar imagens no modal
+    function updateAccessory() {
+        accessoryModal.src = "/static/img/avatareditor/accessories/" + accessories[currentAccessory] + ".png";
+    }
+    function updateOutfit() {
+        outfitModal.src = "/static/img/avatareditor/clothes/" + outfits[currentOutfit] + ".png";
+    }
+
+    // Navegação acessórios
+    function prevAccessory() {
+        currentAccessory = (currentAccessory - 1 + accessories.length) % accessories.length;
+        updateAccessory();
+    }
+    function nextAccessory() {
+        currentAccessory = (currentAccessory + 1) % accessories.length;
+        updateAccessory();
+    }
+
+    // Navegação roupas
+    function prevOutfit() {
+        currentOutfit = (currentOutfit - 1 + outfits.length) % outfits.length;
+        updateOutfit();
+    }
+    function nextOutfit() {
+        currentOutfit = (currentOutfit + 1) % outfits.length;
+        updateOutfit();
+    }
+
+    // Guardar no servidor
+    function saveAvatar() {
+        fetch("/save_avatar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+            accessory: accessories[currentAccessory], // ex: "003"
+            outfit: outfits[currentOutfit]            // ex: "005"
+        })
+
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log("Resposta do servidor:", data);
+            if (data.success) {
+                accessoryMain.src = accessoryModal.src;
+                outfitMain.src = outfitModal.src;
+                closeModal();
+            } else {
+                alert("Erro: " + (data.error || "não guardou"));
+            }
+        })
+        .catch(err => console.error("Erro no fetch:", err));
+    }
+</script>
+
+    
+{% endblock %}
+

@@ -1,0 +1,464 @@
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+  }
+  
+  body { 
+    font-family: 'Segoe UI', Arial, sans-serif; 
+    background-color: #fffaf3; 
+    color: #2c2c2c; 
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+  
+
+  }
+  
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+  main {
+    flex: 1; /* empurra o footer para o fundo */
+  }
+  
+  /* HEADER */
+  header { 
+    background: #4b2e2b; 
+    padding: 15px 0; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  
+  header .container { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    width: 90%; 
+    margin: auto; 
+  }
+  
+  .logo img { 
+    max-width: 120px; /* aumenta o tamanho */
+    height: auto; /* mantém proporção */
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4)); /* sombra atrás */
+  }
+  
+  
+  nav a { 
+    margin-left: 20px; 
+    color: white; 
+    text-decoration: none; 
+    font-weight: bold; 
+    transition: color 0.3s;
+  }
+  
+  nav a:hover { 
+    color: #f4d7b7; 
+  }
+  
+  nav .btn:hover {
+    background-color: #eacaa4;
+    color: #925b55;
+  }
+  
+  /* HERO */
+  .hero { 
+    display: flex; 
+    flex-wrap: wrap;
+    justify-content: space-around; 
+    align-items: center; 
+    padding: 60px 10%; 
+    background: #ffffff; 
+  }
+  
+  .hero-text { 
+    max-width: 500px; 
+  }
+  
+  .hero-text h2 { 
+    font-size: 2.5rem; 
+    color: #4b2e2b; 
+  }
+  
+  .hero-text p { 
+    margin: 20px 0; 
+    font-size: 1.1rem;
+  }
+  
+  .hero-text .btn {
+    display: inline-block;
+    background: #4b2e2b;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  
+  .hero-text .btn:hover {
+    background: #6a3f3a;
+  }
+  
+  .hero-img img { 
+    width: 600px; 
+    max-width: 100%;
+  }
+  
+  /* FEATURES */
+  .features { 
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: space-around; 
+    padding: 50px 10%; 
+    background: #f4d7b7; 
+    gap: 30px;
+  }
+  
+  .feature { 
+    text-align: center; 
+    max-width: 280px; 
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  
+  .feature h3 { 
+    color: #4b2e2b; 
+    margin-bottom: 10px; 
+  }
+  
+  /* FOOTER */
+  footer {
+    position: relative;
+    background: #4b2e2b;
+    text-align: center;
+    color: white;
+    padding: 40px 20px 20px;
+    overflow: hidden; /* impede espaço extra */
+  }
+  
+  
+  footer .wave {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  width: 100%;
+  height: -500px;
+  background: url('img/wave.svg') repeat-x;
+  pointer-events: none; /* evita interações */
+}
+
+/* Só afeta login e register */
+.auth-page {
+  display: flex;
+  justify-content: center;  /* centraliza horizontal */
+  align-items: center;      /* centraliza vertical */
+  height: 100vh;
+  margin: 0;
+  background-color: #EDF4FF;
+  /* Fundo com padrão */
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.15) 0 100%), url('/static/img/chess.png');
+  background-repeat: repeat;
+  background-size: 300px 300px;
+  background-attachment: fixed;
+  animation: moverFundo 20s linear infinite;
+}
+
+@keyframes moverFundo {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 300px 300px;
+  }
+  
+}
+
+
+
+.auth-container {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  max-width: 350px;
+  width: 100%;
+  text-align: center;
+}
+
+
+.auth-container h2 {
+  margin-bottom: 20px;
+  color: #4b2e2b;
+}
+
+.auth-container input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.auth-container .btn {
+  width: 100%;
+  padding: 10px;
+  background: #02B758;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.auth-container .btn:hover {
+  background: #02974a;
+}
+
+.auth-container p {
+  margin-top: 10px;
+}
+
+/* NAV ajustado */
+nav {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* espaço entre elementos */
+}
+
+/* Botão Dashboard */
+nav .btn {
+  background: #f4d7b7;
+  padding: 8px 15px;
+  border-radius: 8px;
+  color: #4b2e2b;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+/* Container do dropdown */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Botão principal */
+.dropbtn {
+  font-family: 'Segoe UI', Arial, sans-serif; 
+  margin-right: -20px; 
+  background: none;
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 5px; /* espaço entre "Olá teste" e seta */
+}
+
+/* Conteúdo do dropdown */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: -30%; /* alinhado à direita do botão */
+  background-color: rgba(255, 255, 255, 0);
+  min-width: 160px;
+  box-shadow: 3px 0 5px -2px rgba(0,0,0,0.2);
+  overflow: hidden;
+  z-index: 100;
+}
+
+/* Links dentro do dropdown */
+.dropdown-content a {
+  color: #4b2e2b;
+  padding: 10px 15px;
+  text-decoration: none;
+  text-align: center;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+  background-color: white;
+  display: block;
+  font-weight: 500;
+  white-space: nowrap; /* impede quebra de linha */
+}
+
+/* Efeito hover nos links */
+.dropdown-content a:hover {
+  background-color: #f4d7b7;
+  color:#4b2e2b;
+}
+
+/* Mostrar dropdown quando hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Cor do botão no hover */
+.dropdown:hover .dropbtn {
+  color: #f4d7b7;
+}
+
+
+.quiz-card {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 25px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.quiz-card h3 {
+  color: #4b2e2b;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.quiz-card form label {
+  display: block;
+  margin: 10px 0 5px;
+  font-weight: bold;
+}
+
+.quiz-card input[type="text"],
+.quiz-card textarea,
+.quiz-card select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.quiz-card textarea {
+  resize: vertical;
+}
+
+.quiz-card button.btn {
+  background: #4b2e2b;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.quiz-card button.btn:hover {
+  background: #6a3f3a;
+}
+
+.question-list {
+  margin-top: 20px;
+  border-top: 1px solid #f0d9c0;
+  padding-top: 15px;
+}
+
+.question-list ul {
+  list-style: disc;
+  padding-left: 20px;
+}
+
+.options form button {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #4b2e2b;
+  background: #f4d7b7;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: left;
+}
+
+.options form button:hover {
+  background: #eacaa4;
+  border-color: #4b2e2b;
+}
+
+.finish-btn {
+  background-color: #f4d7b7;
+  color: #4b2e2b;
+  margin-top: 15px;
+}
+
+.finish-btn:hover {
+  background-color: #eacaa4;
+  color: #3a2321;
+}
+
+.quiz-list ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.quiz-card .btn {
+  background: #4D97FF;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.quiz-card .btn:hover {
+  background: #4383DB;
+}
+
+.question-block {
+  margin-bottom: 15px;
+}
+
+.meus-sets-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.quiz-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.quiz-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  max-width: 300px;
+  width: 100%;
+}
+
+.quiz-card h3 {
+  color: #4b2e2b;
+  margin-bottom: 10px;
+}
+
+.quiz-card p {
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+}
+
+.quiz-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn.small-btn {
+  padding: 5px 10px;
+  font-size: 0.85rem;
+}
+
+

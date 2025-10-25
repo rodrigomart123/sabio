@@ -1,0 +1,21 @@
+{% extends "dashboard.html" %}
+{% block content %}
+<div class="container">
+  <h2>Editar Quiz</h2>
+  <form method="POST" enctype="multipart/form-data">
+    <label>Título:</label>
+    <input type="text" name="title" value="{{ quiz.title }}" required><br>
+
+    <label>Descrição:</label>
+    <textarea name="description">{{ quiz.description }}</textarea><br>
+
+    <label>Público:</label>
+    <input type="checkbox" name="is_public" {% if quiz.is_public %}checked{% endif %}><br>
+
+    <label>Capa:</label>
+    <input type="file" name="cover_image"><br>
+
+    <button type="submit" class="btn btn-success">Guardar Alterações</button>
+  </form>
+</div>
+{% endblock %}

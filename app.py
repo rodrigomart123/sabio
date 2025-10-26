@@ -15,7 +15,7 @@ import uuid
 app = Flask(__name__)
 
 # ⚠️ Em produção, use uma SECRET_KEY de ambiente (ex: export SECRET_KEY="...")
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default_local_key')
 
 # Base de dados (SQLite para desenvolvimento; fácil migrar depois)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///database.db')

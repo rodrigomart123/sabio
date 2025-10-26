@@ -1,0 +1,28 @@
+# ---- Flask & Python ----
+__pycache__/
+*.pyc
+instance/
+*.db
+*.sqlite3
+
+# ---- Environment & config ----
+.env
+.env.*
+*.env
+
+# ---- VS Code ----
+.vscode/
+
+# ---- Virtual environments ----
+venv/
+env/
+.venv/
+ENV/
+
+# ---- Logs ----
+*.log
+logs/
+
+# ---- OS files ----
+.DS_Store
+Thumbs.db

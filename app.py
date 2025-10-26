@@ -18,19 +18,26 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default_local_key')
 
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-default_db_path = os.path.join(BASE_DIR, 'instance', 'local.db')
-default_db = f"sqlite:///{default_db_path}"
+# ---------------------------------------------------------------------
+# Configuração da base de dados
+# ---------------------------------------------------------------------
+db_url = os.environ.get('DATABASE_URL')
 
-db_url = os.environ.get('DATABASE_URL', default_db)
-if db_url.startswith("sqlite:///") and not db_url.startswith("sqlite:////"):
-    db_url = "sqlite:///" + os.path.join(BASE_DIR, db_url.replace("sqlite:///", ""))
+if not db_url:
+    # fallback local SQLite para dev
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+    local_db_path = os.path.join(BASE_DIR, 'instance', 'local.db')
+    db_url = f"sqlite:///{local_db_path}"
+
+# No SQLAlchemy >= 2.0, algumas URLs 'postgres://' precisam ser 'postgresql://'
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+
 
 # E-mail (Flask-Mail) – credenciais via variáveis de ambiente
 app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')

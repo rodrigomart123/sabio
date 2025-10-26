@@ -2,13 +2,12 @@
 {% block content %}
 <style>
   .quiz-container {
-    max-width: 900px;
+    max-width: 1000px;
     margin: 40px auto;
     background: #f9fafb;
     border-radius: 12px;
     padding: 30px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    font-family: "Inter", sans-serif;
   }
 
   .quiz-header {
@@ -24,11 +23,18 @@
     color: #333;
   }
 
+  /* Layout horizontal */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    align-items: start;
+  }
+
   .section {
     background: #fff;
     border-radius: 10px;
     padding: 20px;
-    margin-bottom: 20px;
     border: 1px solid #e5e7eb;
   }
 
@@ -39,12 +45,23 @@
   }
 
   .cover-upload {
-    border: 2px dashed #cbd5e1;
-    border-radius: 10px;
-    padding: 25px;
-    text-align: center;
-    transition: 0.3s;
-  }
+  position: relative;
+  border: 2px dashed #cbd5e1;
+  border-radius: 10px;
+  padding: 100px 20px;
+  text-align: center;
+  background-color: #f8fafc;
+  cursor: pointer;
+}
+
+.cover-upload input[type="file"] {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0; /* deixa invisível */
+  cursor: pointer;
+}
 
   .cover-upload:hover {
     background: #f1f5f9;
@@ -61,16 +78,24 @@
     margin-top: 5px;
   }
 
-  .privacy-setting,
-  .creation-method {
+  .privacy-setting {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 10px;
+    margin-top: 15px;
   }
 
   .privacy-setting label {
     font-size: 16px;
     color: #444;
+  }
+
+  .method-section {
+    margin-top: 25px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
   }
 
   .method-buttons {
@@ -104,47 +129,55 @@
     cursor: pointer;
     transition: background 0.3s;
     width: 100%;
+    margin-top: 30px;
   }
 
   .btn-create:hover {
     background-color: #0891b2;
   }
+
+  /* Responsivo */
+  @media (max-width: 768px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>
 
 <div class="quiz-container">
   <div class="quiz-header">
-    <h2>🧠 Criar Novo Quiz</h2>
+    <h2>Criar Novo Quiz</h2>
   </div>
 
   <form method="POST" enctype="multipart/form-data">
-    <!-- Seção da Imagem de Capa -->
-    <div class="section">
-      <h3>Imagem de Capa</h3>
-      <div class="cover-upload">
-        <p>Arraste uma imagem ou clique abaixo:</p>
-        <input type="file" name="cover_image" accept="image/*">
+
+    <!-- GRID PRINCIPAL -->
+    <div class="form-grid">
+      <!-- Coluna esquerda (Imagem) -->
+      <div class="section">
+        <h3>Imagem de Capa</h3>
+        <div class="cover-upload">
+          <p>Arraste uma imagem ou clique abaixo:</p>
+          <input type="file" name="cover_image" accept="image/*">
+        </div>
+      </div>
+
+      <!-- Coluna direita (Título e descrição) -->
+      <div class="section">
+        <h3>Informações do Quiz</h3>
+        <label>Título:</label>
+        <input type="text" name="title" required placeholder="O meu quiz">
+        <label>Descrição:</label>
+        <textarea name="description" rows="4" placeholder="Um quiz muito interessante"></textarea>
+        <div class="privacy-setting">
+          <input type="checkbox" name="is_public" value="1">
+          <label>Tornar público (visível a todos)</label>
+        </div>
       </div>
     </div>
 
-    <!-- Título e Descrição -->
-    <div class="section">
-      <h3>Título e Descrição</h3>
-      <label>Título:</label>
-      <input type="text" name="title" required placeholder="Adicione um título descritivo">
-      <label>Descrição:</label>
-      <textarea name="description" rows="3" placeholder="Conte aos usuários sobre seu quiz"></textarea>
-    </div>
-
-    <!-- Privacidade -->
-    <div class="section privacy-setting">
-      <label>
-        <input type="checkbox" name="is_public" value="1">
-        Tornar público (visível a todos)
-      </label>
-    </div>
-
-    <!-- Método de Criação -->
-    <div class="section">
+    <!-- Método de Criação (abaixo, na horizontal) -->
+    <div class="method-section">
       <h3>Método de Criação</h3>
       <p>Escolha como você quer adicionar as perguntas:</p>
       <div class="method-buttons">
@@ -154,7 +187,7 @@
       </div>
     </div>
 
-    <!-- Botão de Envio -->
+    <!-- Botão -->
     <button type="submit" class="btn-create">Criar Quiz</button>
   </form>
 </div>

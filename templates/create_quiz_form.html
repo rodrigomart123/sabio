@@ -1,21 +1,161 @@
 {% extends "dashboard.html" %}
 {% block content %}
-<div class="card quiz-card">
-  <h2>Criar Novo Quiz</h2>
+<style>
+  .quiz-container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-family: "Inter", sans-serif;
+  }
+
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+  }
+
+  .quiz-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .section {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #e5e7eb;
+  }
+
+  .section h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #444;
+  }
+
+  .cover-upload {
+    border: 2px dashed #cbd5e1;
+    border-radius: 10px;
+    padding: 25px;
+    text-align: center;
+    transition: 0.3s;
+  }
+
+  .cover-upload:hover {
+    background: #f1f5f9;
+  }
+
+  input[type="text"],
+  input[type="file"],
+  textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 15px;
+    margin-top: 5px;
+  }
+
+  .privacy-setting,
+  .creation-method {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .privacy-setting label {
+    font-size: 16px;
+    color: #444;
+  }
+
+  .method-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .method-btn {
+    flex: 1;
+    background: #e5e7eb;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .method-btn:hover {
+    background: #d1d5db;
+  }
+
+  .btn-create {
+    background-color: #06b6d4;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+    width: 100%;
+  }
+
+  .btn-create:hover {
+    background-color: #0891b2;
+  }
+</style>
+
+<div class="quiz-container">
+  <div class="quiz-header">
+    <h2>🧠 Criar Novo Quiz</h2>
+  </div>
+
   <form method="POST" enctype="multipart/form-data">
-    <label>Título:</label>
-    <input type="text" name="title" required>
+    <!-- Seção da Imagem de Capa -->
+    <div class="section">
+      <h3>Imagem de Capa</h3>
+      <div class="cover-upload">
+        <p>Arraste uma imagem ou clique abaixo:</p>
+        <input type="file" name="cover_image" accept="image/*">
+      </div>
+    </div>
 
-    <label>Descrição:</label>
-    <input type="text" name="description">
+    <!-- Título e Descrição -->
+    <div class="section">
+      <h3>Título e Descrição</h3>
+      <label>Título:</label>
+      <input type="text" name="title" required placeholder="Adicione um título descritivo">
+      <label>Descrição:</label>
+      <textarea name="description" rows="3" placeholder="Conte aos usuários sobre seu quiz"></textarea>
+    </div>
 
-    <label>Imagem de capa (upload opcional):</label>
-    <input type="file" name="cover_image" accept="image/*">
+    <!-- Privacidade -->
+    <div class="section privacy-setting">
+      <label>
+        <input type="checkbox" name="is_public" value="1">
+        Tornar público (visível a todos)
+      </label>
+    </div>
 
-    <label>Tornar público?</label>
-    <input type="checkbox" name="is_public" value="1">
+    <!-- Método de Criação -->
+    <div class="section">
+      <h3>Método de Criação</h3>
+      <p>Escolha como você quer adicionar as perguntas:</p>
+      <div class="method-buttons">
+        <button type="button" class="method-btn">Manual</button>
+        <button type="button" class="method-btn">Importar do Quizlet</button>
+        <button type="button" class="method-btn">Importar CSV</button>
+      </div>
+    </div>
 
-    <button type="submit" class="btn">Criar Quiz</button>
+    <!-- Botão de Envio -->
+    <button type="submit" class="btn-create">Criar Quiz</button>
   </form>
 </div>
 {% endblock %}

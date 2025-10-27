@@ -343,12 +343,14 @@ def favicon():
 def health():
     try:
         conn = get_db()
-        # Quick select to ensure DB accessible
-        conn.execute("SELECT 1").fetchone()
+        cur = conn.cursor()
+        cur.execute("SELECT 1;")
+        cur.fetchone()
         conn.close()
         return {'ok': True}
     except Exception as e:
         return {'ok': False, 'error': str(e)}, 500
+
 
 # -----------------------------------------------------------------------------
 # Pages

@@ -240,28 +240,16 @@ def update_avatar(user_id, outfit=None, accessory=None):
 
 
 def create_quiz(title, description, is_public, created_by, cover_image_url):
-    if USE_POSTGRES:
-        execute_query(
-            "INSERT INTO quizzes (title, description, is_public, created_by, cover_image_url) VALUES (%s, %s, %s, %s, %s)",
-            (title, description, int(bool(is_public)), created_by, cover_image_url),
-            commit=True
-        )
-        row = execute_query(
-            "SELECT * FROM quizzes WHERE title = %s AND created_by = %s ORDER BY id DESC LIMIT 1",
-            (title, created_by),
-            fetchone=True
-        )
-    else:
-        execute_query(
-            "INSERT INTO quizzes (title, description, is_public, created_by, cover_image_url) VALUES (?, ?, ?, ?, ?)",
-            (title, description, int(bool(is_public)), created_by, cover_image_url),
-            commit=True
-        )
-        row = execute_query(
-            "SELECT * FROM quizzes WHERE title = ? AND created_by = ? ORDER BY id DESC LIMIT 1",
-            (title, created_by),
-            fetchone=True
-        )
+    execute_query(
+        "INSERT INTO quizzes (title, description, is_public, created_by, cover_image_url) VALUES (?, ?, ?, ?, ?)",
+        (title, description, bool(is_public), created_by, cover_image_url),
+        commit=True
+    )
+    row = execute_query(
+        "SELECT * FROM quizzes WHERE title = ? AND created_by = ? ORDER BY id DESC LIMIT 1",
+        (title, created_by),
+        fetchone=True
+    )
     return DBObject(row) if row else None
 
 def get_quiz_by_id(quiz_id):
@@ -296,7 +284,7 @@ def update_quiz(quiz_id, title=None, description=None, is_public=None, cover_ima
     if description is not None:
         execute_query("UPDATE quizzes SET description = ? WHERE id = ?", (description, quiz_id), commit=True)
     if is_public is not None:
-        execute_query("UPDATE quizzes SET is_public = ? WHERE id = ?", (int(bool(is_public)), quiz_id), commit=True)
+        execute_query("UPDATE quizzes SET is_public = ? WHERE id = ?", (bool(is_public), quiz_id), commit=True)
     if cover_image_url is not None:
         execute_query("UPDATE quizzes SET cover_image_url = ? WHERE id = ?", (cover_image_url, quiz_id), commit=True)
     return get_quiz_by_id(quiz_id)

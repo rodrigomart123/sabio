@@ -109,52 +109,103 @@ def init_db():
     # Criação das tabelas (usado apenas localmente)
     conn = get_db()
     c = conn.cursor()
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        username TEXT UNIQUE NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        password_hash TEXT NOT NULL
-    )''')
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS avatars (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER UNIQUE NOT NULL,
-        outfit TEXT,
-        accessory TEXT,
-        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    )''')
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS quizzes (
-        id SERIAL PRIMARY KEY,
-        title TEXT NOT NULL,
-        description TEXT,
-        is_public INTEGER DEFAULT 0,
-        created_by INTEGER NOT NULL,
-        cover_image_url TEXT,
-        FOREIGN KEY(created_by) REFERENCES users(id) ON DELETE CASCADE
-    )''')
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS questions (
-        id SERIAL PRIMARY KEY,
-        quiz_id INTEGER NOT NULL,
-        question_text TEXT NOT NULL,
-        option_a TEXT,
-        option_b TEXT,
-        option_c TEXT,
-        option_d TEXT,
-        correct_option TEXT,
-        FOREIGN KEY(quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
-    )''')
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS favorites (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL,
-        quiz_id INTEGER NOT NULL,
-        UNIQUE(user_id, quiz_id),
-        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
-        FOREIGN KEY(quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
-    )''')
+    # users / avatars etc... (sem alteração)
+    if USE_POSTGRES:
+        c.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            username TEXT UNIQUE NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL
+        )''')
+        c.execute('''
+        CREATE TABLE IF NOT EXISTS avatars (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER UNIQUE NOT NULL,
+            outfit TEXT,
+            accessory TEXT,
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+        )''')
+        c.execute('''
+        CREATE TABLE IF NOT EXISTS quizzes (
+            id SERIAL PRIMARY KEY,
+            title TEXT NOT NULL,
+            description TEXT,
+            is_public BOOLEAN DEFAULT FALSE,
+            created_by INTEGER NOT NULL,
+            cover_image_url TEXT,
+            FOREIGN KEY(created_by) REFERENCES users(id) ON DELETE CASCADE
+        )''')
+        c.execute('''
+        CREATE TABLE IF NOT EXISTS questions (
+            id SERIAL PRIMARY KEY,
+            quiz_id INTEGER NOT NULL,
+            question_text TEXT NOT NULL,
+            option_a TEXT,
+            option_b TEXT,
+            option_c TEXT,
+            option_d TEXT,
+            correct_option TEXT,
+            FOREIGN KEY(quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
+        )''')
+        c.execute('''
+        CREATE TABLE IF NOT EXISTS favorites (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            quiz_id INTEGER NOT NULL,
+            UNIQUE(user_id, quiz_id),
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY(quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
+        )''')
+    else:
+        # SQLite
+        c.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL
+        )''')
+        c.execute('''
+        CREATE TABLE IF NOT EXISTS avatars (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER UNIQUE NOT NULL,
+            outfit TEXT,
+            accessory TEXT,
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+        )''')
+        c.execute('''
+        CREATE TABLE IF NOT EXISTS quizzes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            description TEXT,
+            is_public INTEGER DEFAULT 0,
+            created_by INTEGER NOT NULL,
+            cover_image_url TEXT,
+            FOREIGN KEY(created_by) REFERENCES users(id) ON DELETE CASCADE
+        )''')
+        c.execute('''
+        CREATE TABLE IF NOT EXISTS questions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            quiz_id INTEGER NOT NULL,
+            question_text TEXT NOT NULL,
+            option_a TEXT,
+            option_b TEXT,
+            option_c TEXT,
+            option_d TEXT,
+            correct_option TEXT,
+            FOREIGN KEY(quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
+        )''')
+        c.execute('''
+        CREATE TABLE IF NOT EXISTS favorites (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            quiz_id INTEGER NOT NULL,
+            UNIQUE(user_id, quiz_id),
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY(quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
+        )''')
+
     conn.commit()
     conn.close()
 
@@ -270,7 +321,8 @@ def get_quizzes_by_user(user_id):
     return quizzes
 
 def get_public_quizzes():
-    rows = execute_query("SELECT * FROM quizzes WHERE is_public = 1", fetchall=True)
+    # Usa placeholder e passa um booleano; execute_query converte ? -> %s em Postgres
+    rows = execute_query("SELECT * FROM quizzes WHERE is_public = ?", (True,), fetchall=True)
     quizzes = []
     for r in rows or []:
         q = DBObject(r)

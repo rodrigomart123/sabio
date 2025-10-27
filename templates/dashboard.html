@@ -23,16 +23,37 @@
 
 
 
-    .dashboard {
+  .dashboard {
+    position: relative;
     display: flex;
-    min-height: 100vh; /* 👈 instead of fixed height */
-    background: #EDF4FF;
-    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.15) 0 100%), url('/static/img/chess.png');
-    background-repeat: repeat;
-    background-size: 300px 300px;
-    background-attachment: fixed;
-    animation: moverFundo 20s linear infinite;
-    }
+    min-height: 100vh;
+    background-color: #EDF4FF;
+    overflow: hidden; /* evita que o fundo rotacionado saia da área */
+  }
+
+  /* Fundo diagonal tipo mosaico */
+  .dashboard::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    z-index: 0;
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0 100%),
+      url('/static/img/chessver2.png') 0 0 repeat;
+    background-size: 400px 400px; /* ligeiramente maior que o padrão anterior */
+    transform: rotate(10deg);     /* 🔥 cria o padrão na diagonal */
+    transform-origin: center;
+    opacity: 0.9;                 /* suaviza um pouco o fundo */
+  }
+
+  /* Garante que o conteúdo fica acima do fundo */
+  .dashboard > * {
+    position: relative;
+    z-index: 1;
+  }
 
     .dashboard-main {
     flex: 1;

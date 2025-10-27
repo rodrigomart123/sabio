@@ -153,28 +153,38 @@
 
 /* Só afeta login e register */
 .auth-page {
+  position: relative;
   display: flex;
   justify-content: center;  /* centraliza horizontal */
   align-items: center;      /* centraliza vertical */
   height: 100vh;
   margin: 0;
   background-color: #EDF4FF;
-  /* Fundo com padrão */
-  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.15) 0 100%), url('/static/img/chess.png');
-  background-repeat: repeat;
-  background-size: 300px 300px;
-  background-attachment: fixed;
-  animation: moverFundo 20s linear infinite;
+  overflow: hidden; /* impede o fundo girado de sair da tela */
 }
 
-@keyframes moverFundo {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 300px 300px;
-  }
-  
+/* Fundo diagonal tipo mosaico */
+.auth-page::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 0;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0 100%),
+    url('/static/img/chessver2.png') 0 0 repeat;
+  background-size: 400px 400px; /* aumenta ligeiramente o padrão */
+  transform: rotate(10deg);     /* diagonal leve, igual à dashboard */
+  transform-origin: center;
+  opacity: 0.9;                 /* suaviza o fundo */
+}
+
+/* Garante que o conteúdo fique acima do fundo */
+.auth-page > * {
+  position: relative;
+  z-index: 1;
 }
 
 

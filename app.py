@@ -73,35 +73,36 @@ def get_db():
 def execute_query(query, params=(), fetchone=False, fetchall=False, commit=False):
     conn = get_db()
     
-    # Escolher cursor certo dependendo do banco
-    if USE_POSTGRES:
-        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        query = query.replace("?", "%s")  # converter placeholders
-    else:
-        cur = conn.cursor()
-    
-    cur.execute(query, params)
-    data = None
-
-    if fetchone:
-        row = cur.fetchone()
-        if row and not USE_POSTGRES:
-            # converter sqlite3.Row → dict
-            data = dict(zip([col[0] for col in cur.description], row))
+    try:
+        if USE_POSTGRES:
+            cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+            # PostgreSQL usa %s como placeholder
+            query = query.replace("?", "%s")
         else:
-            data = row
-    elif fetchall:
-        rows = cur.fetchall()
-        if rows and not USE_POSTGRES:
-            data = [dict(zip([col[0] for col in cur.description], r)) for r in rows]
-        else:
-            data = rows
+            cur = conn.cursor()
 
-    if commit:
-        conn.commit()
+        cur.execute(query, params)
 
-    conn.close()
-    return data
+        data = None
+        if fetchone:
+            row = cur.fetchone()
+            if row:
+                data = dict(row) if not USE_POSTGRES else row
+        elif fetchall:
+            rows = cur.fetchall()
+            if rows:
+                if USE_POSTGRES:
+                    data = rows
+                else:
+                    data = [dict(r) for r in rows]
+
+        if commit:
+            conn.commit()
+
+        return data
+
+    finally:
+        conn.close()
 
 
 def init_db():
@@ -201,31 +202,67 @@ def get_avatar_by_user_id(user_id):
     return DBObject(row) if row else None
 
 def create_avatar_for_user(user_id):
-    execute_query(
-        "INSERT INTO avatars (user_id, outfit, accessory) VALUES (?, NULL, NULL) ON CONFLICT (user_id) DO NOTHING",
-        (user_id,),
-        commit=True
-    )
+    if USE_POSTGRES:
+        execute_query(
+            "INSERT INTO avatars (user_id, outfit, accessory) VALUES (%s, NULL, NULL) ON CONFLICT (user_id) DO NOTHING",
+            (user_id,),
+            commit=True
+        )
+    else:
+        execute_query(
+            "INSERT OR IGNORE INTO avatars (user_id, outfit, accessory) VALUES (?, NULL, NULL)",
+            (user_id,),
+            commit=True
+        )
     return get_avatar_by_user_id(user_id)
 
 def update_avatar(user_id, outfit=None, accessory=None):
+    # garante que exista
     create_avatar_for_user(user_id)
-    if outfit is not None and accessory is not None:
-        execute_query("UPDATE avatars SET outfit = ?, accessory = ? WHERE user_id = ?", (outfit, accessory, user_id), commit=True)
-    elif outfit is not None:
-        execute_query("UPDATE avatars SET outfit = ? WHERE user_id = ?", (outfit, user_id), commit=True)
-    elif accessory is not None:
-        execute_query("UPDATE avatars SET accessory = ? WHERE user_id = ?", (accessory, user_id), commit=True)
+    
+    # build dynamic query
+    updates = []
+    params = []
+
+    if outfit is not None:
+        updates.append("outfit = %s" if USE_POSTGRES else "outfit = ?")
+        params.append(outfit)
+    if accessory is not None:
+        updates.append("accessory = %s" if USE_POSTGRES else "accessory = ?")
+        params.append(accessory)
+
+    if updates:
+        query = f"UPDATE avatars SET {', '.join(updates)} WHERE user_id = %s" if USE_POSTGRES else f"UPDATE avatars SET {', '.join(updates)} WHERE user_id = ?"
+        params.append(user_id)
+        execute_query(query, tuple(params), commit=True)
+
     return get_avatar_by_user_id(user_id)
 
+
 def create_quiz(title, description, is_public, created_by, cover_image_url):
-    execute_query(
-        "INSERT INTO quizzes (title, description, is_public, created_by, cover_image_url) VALUES (?, ?, ?, ?, ?)",
-        (title, description, int(bool(is_public)), created_by, cover_image_url),
-        commit=True
-    )
-    row = execute_query("SELECT * FROM quizzes WHERE title = ? AND created_by = ?", (title, created_by), fetchone=True)
-    return DBObject(row)
+    if USE_POSTGRES:
+        execute_query(
+            "INSERT INTO quizzes (title, description, is_public, created_by, cover_image_url) VALUES (%s, %s, %s, %s, %s)",
+            (title, description, int(bool(is_public)), created_by, cover_image_url),
+            commit=True
+        )
+        row = execute_query(
+            "SELECT * FROM quizzes WHERE title = %s AND created_by = %s ORDER BY id DESC LIMIT 1",
+            (title, created_by),
+            fetchone=True
+        )
+    else:
+        execute_query(
+            "INSERT INTO quizzes (title, description, is_public, created_by, cover_image_url) VALUES (?, ?, ?, ?, ?)",
+            (title, description, int(bool(is_public)), created_by, cover_image_url),
+            commit=True
+        )
+        row = execute_query(
+            "SELECT * FROM quizzes WHERE title = ? AND created_by = ? ORDER BY id DESC LIMIT 1",
+            (title, created_by),
+            fetchone=True
+        )
+    return DBObject(row) if row else None
 
 def get_quiz_by_id(quiz_id):
     row = execute_query("SELECT * FROM quizzes WHERE id = ?", (quiz_id,), fetchone=True)
@@ -295,7 +332,18 @@ def get_favorite(user_id, quiz_id):
     return DBObject(row) if row else None
 
 def add_favorite(user_id, quiz_id):
-    execute_query("INSERT INTO favorites (user_id, quiz_id) VALUES (?, ?) ON CONFLICT DO NOTHING", (user_id, quiz_id), commit=True)
+    if USE_POSTGRES:
+        execute_query(
+            "INSERT INTO favorites (user_id, quiz_id) VALUES (%s, %s) ON CONFLICT DO NOTHING",
+            (user_id, quiz_id),
+            commit=True
+        )
+    else:
+        execute_query(
+            "INSERT OR IGNORE INTO favorites (user_id, quiz_id) VALUES (?, ?)",
+            (user_id, quiz_id),
+            commit=True
+        )
 
 def remove_favorite(user_id, quiz_id):
     execute_query("DELETE FROM favorites WHERE user_id = ? AND quiz_id = ?", (user_id, quiz_id), commit=True)

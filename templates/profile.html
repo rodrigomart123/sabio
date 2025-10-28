@@ -38,11 +38,28 @@
             height: 265px;
             pointer-events: none; /* evita bug de clicar só na imagem e não no div */
         }
+        
+        .stats-header {
+        width: 100%;
+        background: linear-gradient(to right, #3a70d6, #4D97FF);
+        color: white;
+        text-align: center;
+        padding: 0px 0px;
+        border-radius: 15px 15px 15px 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
 
+        .stats-header h2 {
+        font-size: 22px;
+        font-weight: bold;
+        margin: 0;
+        margin-top: 7px;
+        letter-spacing: 0.5px;
+        }
 
         .stats-section {
-            background: #EDF4FF;
-            border-radius: 15px;
+            background: #F9F9F9;
+            border-radius: 0px 0px 15px 15px;
             padding: 25px 40px;
             box-shadow: 0 6px 14px rgba(0,0,0,0.1);
             display: grid;
@@ -186,6 +203,9 @@
         </div>
 
         <!-- Stats -->
+         <div class="stats-header">
+        <h2>Estatísticas</h2>
+
         <div class="stats-section">
             <div class="stat-card">
                 <i class="fas fa-star"></i>
@@ -216,7 +236,9 @@
                 </div>
             </div>
         </div>
+        </div>
     </div>
+
 
     <!--<a href="/" class="back-btn">Voltar à Página Inicial</a>--> 
 
@@ -239,7 +261,7 @@
                 <button class="arrow right2" onclick="nextOutfit()"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
 
-            <button class="save-btn" onclick="saveAvatar()">Guardar</button>
+            <button class="save-btn" onclick="saveAvatar()"><i class="fas fa-save"></i> Guardar</button>
         </div>
     </div>
 

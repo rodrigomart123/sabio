@@ -23,42 +23,58 @@
 
 
 
-  .dashboard {
-    position: relative;
-    display: flex;
-    min-height: 100vh;
-    background-color: #EDF4FF;
-    overflow: hidden; /* evita que o fundo rotacionado saia da área */
-  }
+.dashboard {
+  position: relative;
+  display: flex;
+  min-height: 100vh;
+  background-color: #EDF4FF;
+  overflow: hidden; /* keeps rotated layer inside */
+}
 
-  /* Fundo diagonal tipo mosaico */
-  .dashboard::before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    z-index: 0;
-    background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0 100%),
-      url('/static/img/chessver2.png') 0 0 repeat;
-    background-size: 400px 400px; /* ligeiramente maior que o padrão anterior */
-    transform: rotate(10deg);     /* 🔥 cria o padrão na diagonal */
-    transform-origin: center;
-    opacity: 0.9;                 /* suaviza um pouco o fundo */
-  }
+/* Fundo diagonal tipo mosaico animado ↗️ */
+.dashboard::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 0;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 1) 0 100%),
+    url('/static/img/chessver2.png') 0 0 repeat;
+  background-size: 400px 400px;
+  transform: rotate(10deg);
+  transform-origin: center;
+  opacity: 0.9;
 
-  /* Garante que o conteúdo fica acima do fundo */
-  .dashboard > * {
-    position: relative;
-    z-index: 1;
-  }
+  /* 💫 Tinta azul escura por cima */
+  background-color: rgb(190, 207, 235); /* um tom mais escuro do #EDF4FF */
+  background-blend-mode: soft-light;
 
-    .dashboard-main {
-    flex: 1;
-    overflow-y: auto;
+  /* movimento */
+  animation: moveDiagonalUpRight 40s linear infinite;
+}
+/* Ensure content stays above background */
+.dashboard > * {
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard-main {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ↗️ Animation — moves up and to the right */
+@keyframes moveDiagonalUpRight {
+  from {
+    background-position: 0 0;
   }
+  to {
+    background-position: 400px -400px; /* right (+X), up (-Y) */
+  }
+}
 
 
     /* Sidebar */
